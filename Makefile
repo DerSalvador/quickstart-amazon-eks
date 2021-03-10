@@ -2,10 +2,11 @@
 
 TASKCAT_OPTIONS ?=
 VERSION ?=
-BUCKET ?=
+BUCKET ?= dersalvador
 PREFIX ?= quickstart-amazon-eks
 PROFILE ?= default
-REGION ?= $(shell aws configure get region --profile $(PROFILE))
+# REGION ?= $(shell aws2 configure get region --profile $(PROFILE))
+REGION ?= eu-central-1
 GH_RELEASE ?= false
 PART ?= patch
 BUILD_FUNCTIONS ?= true
@@ -33,13 +34,13 @@ build:
 	  sed -i "s|Default: $(PREFIX)/|Default: $(PREFIX)-versions/$(VERSION)/|g" output/build/templates/*.yaml ; \
 	fi
 	if [ "$(BUCKET)" != "" ] && [ $(QSPROD_TEST) == "true" ]; then \
- 	  sed -i "s/UsingDefaultBucket: \!Equals \[\!Ref QSS3BucketName, 'aws-quickstart'\]/UsingDefaultBucket: \!Equals [\!Ref QSS3BucketName, \'$(BUCKET)\']/" output/build/templates/*.yaml ; \
+ 	  sed -i.bak "s/UsingDefaultBucket: \!Equals \[\!Ref QSS3BucketName, 'aws-quickstart'\]/UsingDefaultBucket: \!Equals [\!Ref QSS3BucketName, \'$(BUCKET)\']/" output/build/templates/*.yaml ; \
 	fi
 	if [ "$(BUCKET)" != "" ] ; then \
-	  sed -i "s/Default: aws-quickstart/Default: $(BUCKET)/" output/build/templates/*.yaml ; \
+	  sed -i.bak "s/Default: aws-quickstart/Default: $(BUCKET)/" output/build/templates/*.yaml ; \
 	fi
 	if [ "$(REGION)" != "" ] ; then \
-	  sed -i "s/Default: 'us-east-1'/Default: \'$(REGION)\'/" output/build/templates/*.yaml ; \
+	  sed -i.bak "s/Default: 'us-east-1'/Default: \'$(REGION)\'/" output/build/templates/*.yaml ; \
 	fi
 	cd output/build/ && \
 	find . -exec touch -t 202007010000.00 {} + && \
